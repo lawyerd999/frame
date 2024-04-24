@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="fc:frame" content="vNext">
+    <meta property="fc:frame:image" content="https://example.com/image.jpg" alt="Lawyerd Report Scam">
+    <meta property="fc:frame:button:1" content="Submit Report">
+    <meta property="fc:frame:button:1:action" content="post">
+    <meta property="fc:frame:button:1:post_url" content="https://yourserver.com/report">
+    <title>Report a Scam</title>
+</head>
+<body>
+    <h1>Report a Scam</h1>
+    <form action="https://yourserver.com/report" method="POST">
+        <label for="scamLink">Scam URL:</label>
+        <input type="url" id="scamLink" name="scamLink" required><br><br>
+        <label for="screenshotLink">Screenshot URL:</label>
+        <input type="url" id="screenshotLink" name="screenshotLink" required><br><br>
+        <input type="submit" value="Submit Report">
+    </form>
+</body>
+</html>
